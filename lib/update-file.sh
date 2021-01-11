@@ -13,9 +13,11 @@ function UpdateFile {
     GREP_COPY_SIGN="(\(c\)|©|&copy;)"
     GREP_YEAR="[0-9]{4}"
     GREP_SPACE="[ \t]+"
+
     declare -a matchedLines
     mapfile -t matchedLines < <(
-        grep -in -E "${GREP_SPACE}Copyright${GREP_SPACE}(${GREP_COPY_SIGN}${GREP_SPACE}|)${GREP_YEAR}" "$1"
+        #grep -in -E "${GREP_SPACE}Copyright${GREP_SPACE}(${GREP_COPY_SIGN}${GREP_SPACE}|)${GREP_YEAR}" "$1"
+        grep -in -E "Copyright${GREP_SPACE}(${GREP_COPY_SIGN}${GREP_SPACE})${GREP_YEAR}" "$1"
     )
 
     sedString=""
@@ -41,7 +43,7 @@ function UpdateFile {
             )
         fi
     done
-
+    
     if [ ${#sedString} -gt 0 ]; then
         sed -i "$sedString" "$1"
     fi
@@ -68,6 +70,7 @@ function UpdateLine {
     # Compute years by length
     totalLength=${#1}
     beforeLength=${#before}
+
     afterLength=${#after}
     years=${1:${beforeLength}:${totalLength} - ${beforeLength} - ${afterLength}}
 
@@ -79,6 +82,7 @@ function UpdateLine {
 
 function UpdateYears {
     years="$1"
+
 
     lastYear=${years:${#years} - 4:${#years}}
     let "yearDiff = $DESTINATION_YEAR - $lastYear"
